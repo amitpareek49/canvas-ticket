@@ -23,6 +23,46 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script src="./rrweb.js"></script>
+    <script>
+       let events = [];
+        rrweb.record({
+            emit(event) {
+                events.push(event);
+            },
+            recordCanvas: true
+        });
+
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        let myuuid = uuidv4();
+        console.log("uuid------",myuuid);
+    // this function will send events to the backend and reset the events array
+        function save() {
+            const data = events;
+            events = [];
+            console.log("eventssss",events)
+            if(data.length > 0) {
+                fetch('https://collectordev.zipy.ai/fileApi/write', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data,
+                        key: "Key1",
+                        ip: myuuid
+                    }),
+                });
+            }
+        }
+    // save events every 10 seconds
+    setInterval(save, 10 * 1000);
+</script>
   </head>
 
   <body>
